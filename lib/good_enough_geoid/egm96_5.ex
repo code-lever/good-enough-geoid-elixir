@@ -20,7 +20,7 @@ defmodule GoodEnoughGeoid.EGM96_5 do
   end
 
   @doc """
-  Gets the height (in meters) of the geoid at the given latitude/longitude.
+  Gets the approximate height (in meters) of the geoid at the given latitude/longitude.
   """
   @spec height(number, number) :: Float
   def height(latitude, longitude) do
