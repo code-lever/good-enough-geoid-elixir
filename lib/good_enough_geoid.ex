@@ -1,0 +1,2 @@
+defmodule GoodEnoughGeoid do
+end
