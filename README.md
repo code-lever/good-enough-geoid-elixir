@@ -1,5 +1,8 @@
 # "Good Enough" Geoid
 
+[![Build Status](https://travis-ci.org/code-lever/good-enough-geoid-elixir.svg?branch=master "Build Status")](https://travis-ci.org/code-lever/good-enough-geoid-elixir)
+[![Hex Version](https://img.shields.io/hexpm/v/good_enough_geoid.svg "Hex Version")](https://hex.pm/packages/good_enough_geoid)
+
 Elixir library that uses pre-generated EGM96-5 data (from [GeographicLib](http://geographiclib.sourceforge.net)'s Geoid class) to get geoid heights that are kinda ok, just good enough.
 
 Results should be similar to those that [GeoidEval](http://geographiclib.sourceforge.net/cgi-bin/GeoidEval) would give you.
