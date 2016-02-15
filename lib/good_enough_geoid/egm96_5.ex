@@ -7,16 +7,17 @@ defmodule GoodEnoughGeoid.EGM96_5 do
   end
 
   def init([]) do
-    list =
+    map =
       :good_enough_geoid
       |> Application.app_dir("priv")
       |> Path.join("egm96-5.csv.gz")
       |> File.stream!([:read, :compressed])
       |> CSV.decode(strip_cells: true)
       |> Enum.map(&numericize/1)
+      |> to_tuple_keyed_map
 
     Logger.debug "[#{__MODULE__}] heights file loaded"
-    {:ok, list}
+    {:ok, map}
   end
 
   @doc """
@@ -27,19 +28,15 @@ defmodule GoodEnoughGeoid.EGM96_5 do
     GenServer.call(__MODULE__, {:height, latitude, longitude})
   end
 
-  def handle_call({:height, lat, lon}, _from, list) do
-    {:reply, do_height(lat, lon, list), list}
+  def handle_call({:height, lat, lon}, _from, map) do
+    {:reply, do_height(lat, lon, map), map}
   end
 
-  defp do_height(latitude, longitude, list) when is_float(latitude) or is_float(longitude) do
-    do_height(trunc(latitude), trunc(longitude), list)
+  defp do_height(latitude, longitude, map) when is_float(latitude) or is_float(longitude) do
+    do_height(trunc(latitude), trunc(longitude), map)
   end
-  defp do_height(latitude, longitude, list) do
-    list
-    |> Enum.filter(fn [lt, _, _] -> lt == latitude end)
-    |> Enum.filter(fn [_, ln, _] -> ln == longitude end)
-    |> List.first
-    |> Enum.at(2)
+  defp do_height(latitude, longitude, map) do
+    Map.get(map, {latitude, longitude})
   end
 
   defp numericize([latitude, longitude, height]) do
@@ -47,5 +44,11 @@ defmodule GoodEnoughGeoid.EGM96_5 do
     lon = String.to_integer(longitude)
     {hgh, _} = Float.parse(height)
     [lat, lon, hgh]
+  end
+
+  defp to_tuple_keyed_map(heights) do
+    heights
+    |> Enum.map(fn [lat, lon, height] -> {{lat, lon}, height} end)
+    |> Enum.into(%{})
   end
 end
